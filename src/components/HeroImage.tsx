@@ -40,16 +40,26 @@ const HeroImage: FC<HeroImageProps> = ({ data, buttonLink }) => {
       >
         {data.heroImage?.value[0]
           ? (
-            <img
-              className="object-cover h-full mx-auto"
-              width={660}
-              height={770}
-              src={`${data.heroImage.value[0].url}?auto=format&w=800`}
-              alt={data.heroImage.value[0].description ?? "image-alt"}
-            >
-            </img>
-          )
-          : <></>}
+            data.heroImage.value[0].type?.startsWith('image') ? (
+              <img
+                className="object-cover h-full mx-auto"
+                width={660}
+                height={770}
+                src={`${data.heroImage.value[0].url}?auto=format&w=800`}
+                alt={data.heroImage.value[0].description ?? "image-alt"}
+              />
+            ) : (
+              <video
+                src={data.heroImage.value[0].url}
+                autoPlay={true}
+                loop={true}
+                muted={true}
+                width={660}
+                height={770}    
+                className="object-cover h-full mx-auto"
+              />
+            )
+          ) : <></>}
       </div>
     </div>
   );
