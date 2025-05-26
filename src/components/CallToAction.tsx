@@ -40,7 +40,7 @@ const CallToActionComponent: React.FC<CallToActionProps> = ({
     <div
       className={`${style === "burgundy" ? "burgundy-theme" : ""} flex flex-col ${
         calculateLayout(imagePosition)
-      } items-center gap-16`}
+      } items-center gap-16 py-16`}
     >
       <div className="rounded-lg xl:w-[560px] lg:w-[420px]">
         <img

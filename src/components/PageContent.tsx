@@ -20,7 +20,7 @@ const PageContent: FC<PageContentProps> = ({ body, itemId, elementName }) => {
   const value = !body || !body.value ? "<p><br/></p>" : body.value;
   const portableText = transformToPortableText(value);
   return (
-    <div className="pt-[104px] pb-40 flex flex-col gap-40"
+    <div className="pt-10 pb-20 flex flex-col"
       {...createItemSmartLink(itemId)}
       {...createElementSmartLink(
         elementName

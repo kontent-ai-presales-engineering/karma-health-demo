@@ -3,8 +3,8 @@ import Link from "../components/Link";
 
 export const defaultPortableRichTextResolvers = {
   list: {
-    bullet: ({ children }) => <ul className="text-xl text-gray-700 list-disc ml-8 ">{children}</ul>,
-    number: ({ children }) => <ol className="text-xl text-gray-700 list-decimal ml-8">{children}</ol>,
+    bullet: ({ children }) => <ul className="text-xl text-gray-700 list-disc ml-8 py-5">{children}</ul>,
+    number: ({ children }) => <ol className="text-xl text-gray-700 list-decimal ml-8 py-5">{children}</ol>,
   },
   types: {
     image: ({ value }) => (
@@ -26,12 +26,12 @@ export const defaultPortableRichTextResolvers = {
     link: ({ text, value }) => <Link href={value?.href ?? "#"} text={text}></Link>,
   },
   block: {
-    h1: ({ children }) => <h1 className="text-heading-1 text-heading-1-color leading-[130%] w-full">{children}</h1>,
-    h2: ({ children }) => <h2 className="text-heading-2 text-heading-2-color leading-[130%] w-full">{children}</h2>,
-    h3: ({ children }) => <h3 className="text-heading-3 text-heading-3-color leading-[130%] w-full">{children}</h3>,
-    h4: ({ children }) => <h4 className="text-heading-4 text-heading-4-color leading-[130%] w-full">{children}</h4>,
+    h1: ({ children }) => <h1 className="text-heading-1 text-heading-1-color leading-[130%] w-full py-5">{children}</h1>,
+    h2: ({ children }) => <h2 className="text-heading-2 text-heading-2-color leading-[130%] w-full py-5">{children}</h2>,
+    h3: ({ children }) => <h3 className="text-heading-3 text-heading-3-color leading-[130%] w-full py-5">{children}</h3>,
+    h4: ({ children }) => <h4 className="text-heading-4 text-heading-4-color leading-[130%] w-full py-5">{children}</h4>,
 
-    normal: ({ children }) => <p className="text-body-lg text-body-color w-full">{children}</p>,
+    normal: ({ children }) => <p className="text-body-lg text-body-color w-full pb-5">{children}</p>,
   },
 } as const satisfies PortableTextReactResolvers;
 

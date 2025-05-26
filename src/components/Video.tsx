@@ -11,7 +11,7 @@ type VideoProps = {
 
 const VideoComponent: FC<VideoProps> = ({ video, parentId, componentId }) => {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center py-16">
       <h2 className="text-azure text-[40px] md:text-[64px] leading-[54px] w-2/4 text-center"
       {...createItemSmartLink(parentId)}
       {...(componentId && createComponentSmartLink(componentId))}>

@@ -11,7 +11,7 @@ type DisclaimerBaseProps = Readonly<{
 
 const DisclaimerBase: React.FC<DisclaimerBaseProps> = ({ title, text, parentId, componentId, theme }) => {
   return (
-    <div className={`${theme === "burgundy" ? "burgundy-theme" : ""} bg-background-color pt-16 pb-20 rounded-lg`}>
+    <div className={`${theme === "burgundy" ? "burgundy-theme" : ""} bg-background-color py-16 pb-20 rounded-lg py-16`}>
       <h1 className="text-6xl text-heading-2-color font-serif text-center mb-6"
       {...createItemSmartLink(parentId)}
       {...createElementSmartLink("headline")}
