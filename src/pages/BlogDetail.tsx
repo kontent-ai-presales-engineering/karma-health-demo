@@ -42,7 +42,7 @@ const BlogDetail: React.FC = () => {
   });
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
-    if (blogPostQuery.data && data.item.codename === blogPostQuery.data.system.codename) {
+    if (blogPostQuery.data) {
       applyUpdateOnItemAndLoadLinkedItems(
         blogPostQuery.data,
         data,

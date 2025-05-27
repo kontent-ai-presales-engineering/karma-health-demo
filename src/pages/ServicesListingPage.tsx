@@ -35,7 +35,7 @@ const useServicesPage = (isPreview: boolean, lang: string | null) => {
   }, [environmentId, apiKey, isPreview, lang]);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
-    if (page && data.item.codename === page.system.codename) {
+    if (page) {
       applyUpdateOnItemAndLoadLinkedItems(
         page,
         data,

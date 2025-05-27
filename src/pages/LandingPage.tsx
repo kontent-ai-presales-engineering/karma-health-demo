@@ -25,11 +25,13 @@ const useLandingPage = (isPreview: boolean, lang: string | null) => {
       applyUpdateOnItemAndLoadLinkedItems(
         landingPage,
         data,
-        (codenamesToFetch) => createClient(environmentId, apiKey, isPreview)
+        codenamesToFetch => createClient(environmentId, apiKey, isPreview)
           .items()
           .inFilter("system.codename", [...codenamesToFetch])
           .toPromise()
           .then(res => res.data.items)
+      //     .toPromise()
+      //     .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
           setLandingPage(updatedItem as Replace<LandingPage, { elements: Partial<LandingPage["elements"]> }>);

@@ -19,7 +19,7 @@ const useBlogPage = (isPreview: boolean, lang: string | null) => {
   const [page, setPage] = useState<Page | null>(null);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
-    if (page && data.item.codename === page.system.codename) {
+    if (page) {
       // Use applyUpdateOnItemAndLoadLinkedItems to ensure all linked content is updated
       applyUpdateOnItemAndLoadLinkedItems(
         page,

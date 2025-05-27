@@ -1,9 +1,8 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { createClient } from "../utils/client";
 import { useAppContext } from "../context/AppContext";
 import { Service, Person, LanguageCodenames } from "../model";
-import { DeliveryError } from "@kontent-ai/delivery-sdk";
 import { PortableText } from "@portabletext/react";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
 import { defaultPortableRichTextResolvers } from "../utils/richtext";
@@ -16,7 +15,7 @@ import { useCustomRefresh, useLivePreview } from "../context/SmartLinkContext";
 import { createElementSmartLink, createItemSmartLink } from "../utils/smartlink";
 import { useQuery } from "@tanstack/react-query";
 
-const TeamMemberCard: React.FC<{
+interface TeamMemberCardProps {
   prefix?: string;
   firstName: string;
   lastName: string;
@@ -27,7 +26,17 @@ const TeamMemberCard: React.FC<{
     alt: string;
   };
   codename: string;
-}> = ({ prefix, firstName, lastName, suffix, jobTitle, image, codename }) => {
+}
+
+const TeamMemberCard: React.FC<TeamMemberCardProps> = React.memo(({ 
+  prefix, 
+  firstName, 
+  lastName, 
+  suffix, 
+  jobTitle, 
+  image, 
+  codename 
+}) => {
   const [searchParams] = useSearchParams();
   const isPreview = searchParams.get("preview") === "true";
 
@@ -49,16 +58,51 @@ const TeamMemberCard: React.FC<{
       </div>
     </div>
   );
-};
+});
 
-const useService = (slug: string | undefined, isPreview: boolean, lang: string | null) => {
+TeamMemberCard.displayName = 'TeamMemberCard';
+
+const ServiceDetail: React.FC = () => {
   const { environmentId, apiKey } = useAppContext();
-  const [service, setService] = useState<Service | null>(null);
-  const [serviceCodename, setServiceCodename] = useState<string | null>(null);
+  const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get("preview") === "true";
+  const lang = searchParams.get("lang");
+
+  const { data: service, refetch } = useQuery({
+    queryKey: [`service-detail_${slug}`, lang, isPreview],
+    queryFn: async () => {
+      const client = createClient(environmentId, apiKey, isPreview);
+      
+      // First get the service by slug
+      const slugResponse = await client
+        .items<Service>()
+        .type("service")
+        .equalsFilter("elements.url_slug", slug ?? "")
+        .toPromise();
+      
+      const serviceCodename = slugResponse.data.items[0]?.system.codename;
+      
+      if (!serviceCodename) {
+        return null;
+      }
+
+      // Then get the full service data with language
+      const serviceResponse = await client
+        .items<Service>()
+        .type("service")
+        .equalsFilter("system.codename", serviceCodename)
+        .languageParameter((lang ?? "default") as LanguageCodenames)
+        .depthParameter(1)
+        .toPromise();
+
+      return serviceResponse.data.items[0] ?? null;
+    },
+    enabled: !!slug,
+  });
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
-    if (service && data.item.codename === service.system.codename) {
-      // Use applyUpdateOnItemAndLoadLinkedItems to ensure all linked content is updated
+    if (service) {
       applyUpdateOnItemAndLoadLinkedItems(
         service,
         data,
@@ -69,109 +113,42 @@ const useService = (slug: string | undefined, isPreview: boolean, lang: string |
           .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
-          setService(updatedItem as Service);
+          refetch();
         }
       });
     }
-  }, [service, environmentId, apiKey, isPreview]);
-
-  // First fetch to get the service codename
-  useEffect(() => {
-    if (slug) {
-      createClient(environmentId, apiKey, isPreview)
-        .items<Service>()
-        .type("service")
-        .equalsFilter("elements.url_slug", slug)
-        .toPromise()
-        .then((res) => {
-          const item = res.data.items[0];
-          if (item) {
-            setServiceCodename(item.system.codename);
-          } else {
-            setServiceCodename(null);
-          }
-        })
-        .catch((err) => {
-          if (err instanceof DeliveryError) {
-            setServiceCodename(null);
-          } else {
-            throw err;
-          }
-        });
-    }
-  }, [slug, environmentId, apiKey, isPreview]);
-
-  // Second fetch to get the full service data with language
-  useEffect(() => {
-    if (serviceCodename) {
-      createClient(environmentId, apiKey, isPreview)
-        .items<Service>()
-        .type("service")
-        .equalsFilter("system.codename", serviceCodename)
-        .languageParameter((lang ?? "default") as LanguageCodenames)
-        .depthParameter(1)
-        .toPromise()
-        .then((res) => {
-          const item = res.data.items[0];
-          if (item) {
-            setService(item);
-          } else {
-            setService(null);
-          }
-        })
-        .catch((err) => {
-          if (err instanceof DeliveryError) {
-            setService(null);
-          } else {
-            throw err;
-          }
-        });
-    }
-  }, [serviceCodename, environmentId, apiKey, isPreview, lang]);
+  }, [service, environmentId, apiKey, isPreview, refetch]);
 
   useLivePreview(handleLiveUpdate);
-
-  return service;
-};
-
-const ServiceDetail: React.FC = () => {
-  const { environmentId, apiKey } = useAppContext();
-  const { slug } = useParams();
-  const [searchParams] = useSearchParams();
-  const isPreview = searchParams.get("preview") === "true";
-  const lang = searchParams.get("lang");
-
-  const serviceData = useQuery({
-    queryKey: [`service-detail_${slug}`],
-    queryFn: () =>
-      createClient(environmentId, apiKey, isPreview)
-        .items<Service>()
-        .type("service")
-        .equalsFilter("elements.url_slug", slug ?? "")
-        .toPromise()
-        .then((res) => res.data.items[0])
-        .catch((err) => {
-          if (err instanceof DeliveryError) {
-            return null;
-          }
-          throw err;
-        }),
-  });
 
   const onRefresh = useCallback(
     (_: IRefreshMessageData, metadata: IRefreshMessageMetadata, originalRefresh: () => void) => {
       if (metadata.manualRefresh) {
         originalRefresh();
       } else {
-        serviceData.refetch();
+        refetch();
       }
     },
-    [serviceData],
+    [refetch],
   );
 
   useCustomRefresh(onRefresh);
 
-  const service = useService(slug, isPreview, lang);
+  const teamMembers = useMemo(() => 
+    service?.elements.team.linkedItems.map((person: Person) => ({
+      id: person.system.id,
+      prefix: person.elements.prefix?.value,
+      firstName: person.elements.first_name?.value || "",
+      lastName: person.elements.last_name?.value || "",
+      suffix: person.elements.suffixes?.value,
+      jobTitle: person.elements.job_title?.value || "",
+      image: {
+        url: person.elements.image?.value[0]?.url || "",
+        alt: person.elements.image?.value[0]?.description
+          || `Photo of ${person.elements.first_name?.value} ${person.elements.last_name?.value}`,
+      },
+      codename: person.system.codename,
+    })) ?? [], [service?.elements.team.linkedItems]);
 
   if (!service) {
     return <div className="flex-grow" />;
@@ -239,20 +216,10 @@ const ServiceDetail: React.FC = () => {
               <div className="max-w-3xl">
                 <h2 className="text-heading-2 text-burgundy mb-10">Team</h2>
                 <div className="flex flex-col gap-6">
-                  {service.elements.team.linkedItems.map((person: Person) => (
+                  {teamMembers.map((member) => (
                     <TeamMemberCard
-                      key={person.system.id}
-                      prefix={person.elements.prefix?.value}
-                      firstName={person.elements.first_name?.value || ""}
-                      lastName={person.elements.last_name?.value || ""}
-                      suffix={person.elements.suffixes?.value}
-                      jobTitle={person.elements.job_title?.value || ""}
-                      image={{
-                        url: person.elements.image?.value[0]?.url || "",
-                        alt: person.elements.image?.value[0]?.description
-                          || `Photo of ${person.elements.first_name?.value} ${person.elements.last_name?.value}`,
-                      }}
-                      codename={person.system.codename}
+                      key={member.id}
+                      {...member}
                     />
                   ))}
                 </div>
@@ -265,4 +232,4 @@ const ServiceDetail: React.FC = () => {
   );
 };
 
-export default ServiceDetail;
+export default React.memo(ServiceDetail);

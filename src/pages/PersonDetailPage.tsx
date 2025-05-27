@@ -42,7 +42,7 @@ const PersonDetailPage: React.FC = () => {
   });
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
-    if (person && data.item.codename === person.system.codename) {
+    if (person) {
       applyUpdateOnItemAndLoadLinkedItems(
         person,
         data,
