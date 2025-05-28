@@ -356,6 +356,7 @@ const ArticlesListingPage: React.FC = () => {
                 publishDate: article.elements.publish_date.value ?? "",
                 topics: article.elements.topics.value.map(term => term.name),
                 urlSlug: article.elements.url_slug.value,
+                itemId: article.system.id,
               }))}
           />
         </div>

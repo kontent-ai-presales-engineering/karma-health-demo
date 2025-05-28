@@ -14,7 +14,7 @@ type FeaturedArticleProps = Readonly<{
     publishDate: string;
     introduction: string;
     topics: ReadonlyArray<string>;
-    itemId?: string;
+    itemId: string;
   }>;
   displayFeatured?: boolean;
   urlSlug: string;

@@ -263,6 +263,7 @@ const ArticleDetailPage: React.FC = () => {
                 introduction: article.elements.introduction.value,
                 publishDate: article.elements.publish_date.value ?? "",
                 topics: article.elements.topics.value.map(topic => topic.name),
+                itemId: article.system.id,
               }))}
             />
           </div>

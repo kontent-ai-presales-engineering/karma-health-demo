@@ -14,6 +14,7 @@ type ArticleData = Readonly<{
   publishDate: string;
   topics: ReadonlyArray<string>;
   urlSlug: string;
+  itemId: string;
 }>;
 
 type ArticleListProps = Readonly<{
@@ -22,7 +23,7 @@ type ArticleListProps = Readonly<{
 
 const ArticleList: React.FC<ArticleListProps> = ({ articles }) => {
   return (
-    <div className="flex flex-col items-center ">
+    <div className="flex flex-col items-center">
       {articles.length === 0
         ? <p className="text-center text-grey text-body-xl">No articles available</p>
         : (articles.map((article, index) => (
@@ -35,7 +36,8 @@ const ArticleList: React.FC<ArticleListProps> = ({ articles }) => {
                   title: article.title,
                   introduction: article.introduction,
                   publishDate: article.publishDate,
-                  topics: article.topics
+                  topics: article.topics,
+                  itemId: article.itemId
                 }}
                 urlSlug={article.urlSlug}
               />
