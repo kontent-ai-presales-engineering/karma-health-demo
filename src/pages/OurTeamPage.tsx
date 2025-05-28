@@ -185,6 +185,7 @@ const OurTeamPage: React.FC = () => {
               lastName: member.elements.last_name.value,
               position: member.elements.job_title.value,
               link: member.system.codename,
+              itemId: member.system.id,
             }))}
           />
         </div>

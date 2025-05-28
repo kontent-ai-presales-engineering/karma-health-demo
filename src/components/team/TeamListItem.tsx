@@ -1,5 +1,6 @@
 import { FC } from "react";
 import ButtonLink from "../ButtonLink";
+import { createItemSmartLink } from "../../utils/smartlink";
 
 type TeamListItemProps = {
   image: {
@@ -12,11 +13,13 @@ type TeamListItemProps = {
   lastName: string;
   title: string;
   link: string;
+  itemId: string;
 };
 
-export const TeamListItem: FC<TeamListItemProps> = ({ image, prefix, suffix, firstName, lastName, title, link }) => {
+export const TeamListItem: FC<TeamListItemProps> = ({ image, prefix, suffix, firstName, lastName, title, link, itemId }) => {
   return (
-    <div className="flex flex-col items-center text-center gap-6">
+    <div className="flex flex-col items-center text-center gap-6"
+          {...createItemSmartLink(itemId)}>
       <div className="w-[300px] h-[300px] rounded-full overflow-hidden">
         <img src={image.url} alt={image.alt} className="w-full h-full object-cover" />
       </div>

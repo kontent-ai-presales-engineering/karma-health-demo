@@ -13,6 +13,7 @@ interface TeamMemberListProps {
     lastName: string;
     position: string;
     link: string;
+    itemId: string;
   }[];
 }
 
@@ -29,6 +30,7 @@ const TeamMemberList: FC<TeamMemberListProps> = ({ teamMembers }) => {
           lastName={member.lastName}
           title={member.position}
           link={member.link}
+          itemId={member.itemId}
         />
       ))}
     </div>
