@@ -10,13 +10,15 @@ import { defaultPortableRichTextResolvers, isEmptyRichText } from "../utils/rich
 import { PortableText } from "@portabletext/react";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
 import { LanguageCodenames } from "../model";
-import { IUpdateMessageData, applyUpdateOnItemAndLoadLinkedItems } from "@kontent-ai/smart-link";
-import { useLivePreview } from "../context/SmartLinkContext";
+import { IRefreshMessageData, IRefreshMessageMetadata, IUpdateMessageData, applyUpdateOnItemAndLoadLinkedItems } from "@kontent-ai/smart-link";
+import { useCustomRefresh, useLivePreview } from "../context/SmartLinkContext";
 import { createElementSmartLink, createItemSmartLink } from "../utils/smartlink";
+import { Replace } from "../utils/types";
+import { useSuspenseQueries } from "@tanstack/react-query";
 
 const useTeamPage = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey } = useAppContext();
-  const [page, setPage] = useState<Page | null>(null);
+  const [page, setPage] = useState<Replace<Page, { elements: Partial<Page["elements"]> }> | null>(null);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
     if (page) {
@@ -31,7 +33,7 @@ const useTeamPage = (isPreview: boolean, lang: string | null) => {
           .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
-          setPage(updatedItem as Page);
+          setPage(updatedItem as Replace<Page, { elements: Partial<Page["elements"]> }>);
         }
       });
     }
@@ -62,6 +64,7 @@ const useTeamPage = (isPreview: boolean, lang: string | null) => {
 const useTeamMembers = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey } = useAppContext();
   const [teamMembers, setTeamMembers] = useState<Person[]>([]);
+  
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
     // Update the specific team member in the list
@@ -79,7 +82,7 @@ const useTeamMembers = (isPreview: boolean, lang: string | null) => {
               .then(res => res.data.items)
           ).then((updatedItem) => {
             if (updatedItem) {
-              setTeamMembers(prev => prev.map(m => 
+              setTeamMembers(prev => prev.map(m =>
                 m.system.codename === data.item.codename ? updatedItem as Person : m
               ));
             }
@@ -115,12 +118,49 @@ const useTeamMembers = (isPreview: boolean, lang: string | null) => {
 };
 
 const OurTeamPage: React.FC = () => {
+  const { environmentId, apiKey } = useAppContext();
   const [searchParams] = useSearchParams();
   const isPreview = searchParams.get("preview") === "true";
   const lang = searchParams.get("lang");
 
-  const teamPage = useTeamPage(isPreview, lang);
-  const teamMembers = useTeamMembers(isPreview, lang);
+  const teamPage = useTeamPage(isPreview, lang);  
+  const teamMembers = useTeamMembers(isPreview, lang);  
+
+  const [teamPageData] = useSuspenseQueries({
+    queries: [
+      {
+        queryKey: ["landing_page"],
+        queryFn: () =>
+          createClient(environmentId, apiKey, isPreview)
+            .items()
+            .type("landing_page")
+            .limitParameter(1)
+            .toPromise()
+            .then(res =>
+              res.data.items[0] as Replace<Page, { elements: Partial<Page["elements"]> }> ?? null
+            )
+            .catch((err) => {
+              if (err instanceof DeliveryError) {
+                return null;
+              }
+              throw err;
+            }),
+      },
+    ],
+  });
+
+  const onRefresh = useCallback(
+    (_: IRefreshMessageData, metadata: IRefreshMessageMetadata, originalRefresh: () => void) => {
+      if (metadata.manualRefresh) {
+        originalRefresh();
+      } else {
+        teamPageData.refetch();
+      }
+    },
+    [teamPage],
+  );
+
+  useCustomRefresh(onRefresh);
 
   if (!teamPage || !teamMembers) {
     return <div className="flex-grow" />;
@@ -132,16 +172,16 @@ const OurTeamPage: React.FC = () => {
         <div className="flex flex-col-reverse gap-16 lg:gap-0 lg:flex-row items-center py-16 lg:py-0 lg:pt-[104px] lg:pb-[160px]">
           <div className="flex flex-col flex-1 gap-6">
             <h1 className="text-heading-1 text-heading-1-color"
-            {...createItemSmartLink(teamPage.system.id)}
-            {...createElementSmartLink("headline")}
+              {...createItemSmartLink(teamPage.system.id)}
+              {...createElementSmartLink("headline")}
             >
-              {teamPage.elements.headline.value}
+              {teamPage.elements.headline?.value}
             </h1>
             <p className="text-body-lg text-body-color"
-            {...createItemSmartLink(teamPage.system.id)}
-            {...createElementSmartLink("subheadline")}
+              {...createItemSmartLink(teamPage.system.id)}
+              {...createElementSmartLink("subheadline")}
             >
-              {teamPage.elements.subheadline.value}
+              {teamPage.elements.subheadline?.value}
             </p>
           </div>
           <div className="flex flex-col flex-1">
@@ -156,20 +196,20 @@ const OurTeamPage: React.FC = () => {
         </div>
       </PageSection>
 
-      {!isEmptyRichText(teamPage.elements.body.value) && (
+      {!isEmptyRichText(teamPage.elements.body?.value ?? "") && (
         <PageSection color="bg-white">
           <div className="flex flex-col pt-10 mx-auto gap-6"
-          {...createItemSmartLink(teamPage.system.id)}
-          {...createElementSmartLink("body")}
+            {...createItemSmartLink(teamPage.system.id)}
+            {...createElementSmartLink("body")}
           >
             <PortableText
-              value={transformToPortableText(teamPage.elements.body.value)}
+              value={transformToPortableText(teamPage.elements.body?.value ?? "")}
               components={defaultPortableRichTextResolvers}
             />
           </div>
         </PageSection>
       )}
-      
+
       <PageSection color="bg-white">
         <div className="pb-[160px] pt-[104px]">
           <TeamMemberList
