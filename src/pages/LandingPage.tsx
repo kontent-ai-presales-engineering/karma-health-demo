@@ -16,7 +16,7 @@ import { IRefreshMessageData, IRefreshMessageMetadata, IUpdateMessageData, apply
 import { useSuspenseQueries } from "@tanstack/react-query";
 
 const useLandingPage = (isPreview: boolean, lang: string | null) => {
-  const { environmentId, apiKey } = useAppContext();
+  const { environmentId, apiKey, collection } = useAppContext();
   const [landingPage, setLandingPage] = useState<Replace<LandingPage, { elements: Partial<LandingPage["elements"]> }> | null>(null);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
@@ -43,6 +43,7 @@ const useLandingPage = (isPreview: boolean, lang: string | null) => {
       .items()
       .type("landing_page")
       .limitParameter(1)
+      .equalsFilter("system.collection", collection)
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
       .then(res => {
