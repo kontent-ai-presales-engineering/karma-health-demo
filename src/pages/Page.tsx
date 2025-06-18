@@ -13,7 +13,6 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useCustomRefresh, useLivePreview } from "../context/SmartLinkContext";
 import { IRefreshMessageData, IRefreshMessageMetadata, IUpdateMessageData, applyUpdateOnItemAndLoadLinkedItems } from "@kontent-ai/smart-link";
 import { useSuspenseQueries } from "@tanstack/react-query";
-import { createImageUrl } from "../utils/image";
 
 const usePage = (isPreview: boolean, lang: string | null, slug: string | null) => {
   const { environmentId, apiKey } = useAppContext();
