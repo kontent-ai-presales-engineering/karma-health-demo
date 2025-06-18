@@ -136,20 +136,6 @@ const Page: FC = () => {
           </PageSection>
         )
       }
-      {
-        page.elements.hero_image?.value[0] && (
-          <PageSection color="bg-white">
-            <img
-              className="object-cover h-full w-full"
-              width={1920}
-              height={770}
-              src={createImageUrl(page.elements.hero_image.value[0], "auto=format&q=50&w=1920")}
-              alt={page.elements.hero_image.value[0].description ?? "image-alt"}
-            >
-            </img>
-          </PageSection>
-        )
-      }
       <PageSection color="bg-white">
         <PageContent body={page.elements.body!} itemId={page.system.id} elementName="body" />
       </PageSection>
