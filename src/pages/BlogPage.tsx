@@ -10,11 +10,9 @@ import { defaultPortableRichTextResolvers, isEmptyRichText } from "../utils/rich
 import { PortableText } from "@portabletext/react";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
 import { LanguageCodenames } from "../model";
-import { IRefreshMessageData, IRefreshMessageMetadata, IUpdateMessageData, applyUpdateOnItemAndLoadLinkedItems } from "@kontent-ai/smart-link";
-import { useCustomRefresh, useLivePreview } from "../context/SmartLinkContext";
+import { IUpdateMessageData, applyUpdateOnItemAndLoadLinkedItems } from "@kontent-ai/smart-link";
+import { useLivePreview } from "../context/SmartLinkContext";
 import { createElementSmartLink, createItemSmartLink } from "../utils/smartlink";
-import { useSuspenseQueries } from "@tanstack/react-query";
-import { Replace } from "../utils/types";
 
 const useBlogPage = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey } = useAppContext();
@@ -81,7 +79,7 @@ const useBlogPosts = (isPreview: boolean, lang: string | null) => {
               .then(res => res.data.items)
           ).then((updatedItem) => {
             if (updatedItem) {
-              setBlogPosts(prev => prev.map(p =>
+              setBlogPosts(prev => prev.map(p => 
                 p.system.codename === data.item.codename ? updatedItem as BlogPost : p
               ));
             }
@@ -117,49 +115,12 @@ const useBlogPosts = (isPreview: boolean, lang: string | null) => {
 };
 
 const BlogPage: React.FC = () => {
-  const { environmentId, apiKey } = useAppContext();
   const [searchParams] = useSearchParams();
   const isPreview = searchParams.get("preview") === "true";
   const lang = searchParams.get("lang");
 
   const blogPage = useBlogPage(isPreview, lang);
   const blogPosts = useBlogPosts(isPreview, lang);
-
-  const [blogPageData] = useSuspenseQueries({
-    queries: [
-      {
-        queryKey: ["landing_page"],
-        queryFn: () =>
-          createClient(environmentId, apiKey, isPreview)
-            .items()
-            .type("landing_page")
-            .limitParameter(1)
-            .toPromise()
-            .then(res =>
-              res.data.items[0] as Replace<Page, { elements: Partial<Page["elements"]> }> ?? null
-            )
-            .catch((err) => {
-              if (err instanceof DeliveryError) {
-                return null;
-              }
-              throw err;
-            }),
-      },
-    ],
-  });
-
-  const onRefresh = useCallback(
-    (_: IRefreshMessageData, metadata: IRefreshMessageMetadata, originalRefresh: () => void) => {
-      if (metadata.manualRefresh) {
-        originalRefresh();
-      } else {
-        blogPageData.refetch();
-      }
-    },
-    [blogPage],
-  );
-
-  useCustomRefresh(onRefresh);
 
   if (!blogPage || !blogPosts) {
     return <div className="flex-grow" />;
@@ -171,37 +132,35 @@ const BlogPage: React.FC = () => {
         <div className="flex flex-col-reverse gap-16 lg:gap-0 lg:flex-row items-center py-16 lg:py-0 lg:pt-[104px] lg:pb-[160px]">
           <div className="flex flex-col flex-1 gap-6">
             <h1 className="text-heading-1 text-heading-1-color"
-              {...createItemSmartLink(blogPage.system.id)}
-              {...createElementSmartLink("headline")}
+            {...createItemSmartLink(blogPage.system.id)}
+            {...createElementSmartLink("headline")}
             >
               {blogPage.elements.headline.value}
             </h1>
             <p className="text-body-lg text-body-color"
-              {...createItemSmartLink(blogPage.system.id)}
-              {...createElementSmartLink("subheadline")}
+            {...createItemSmartLink(blogPage.system.id)}
+            {...createElementSmartLink("subheadline")}
             >
               {blogPage.elements.subheadline.value}
             </p>
           </div>
-          {blogPage.elements.hero_image?.value[0]?.url && (
-            <div className="flex flex-col flex-1">
-              <img
-                width={670}
-                height={440}
-                src={blogPage.elements.hero_image?.value[0]?.url}
-                alt={blogPage.elements.hero_image?.value[0]?.description ?? ""}
-                className="rounded-lg"
-              />
-            </div>
-          )}
+          <div className="flex flex-col flex-1">
+            <img
+              width={670}
+              height={440}
+              src={blogPage.elements.hero_image?.value[0]?.url}
+              alt={blogPage.elements.hero_image?.value[0]?.description ?? ""}
+              className="rounded-lg"
+            />
+          </div>
         </div>
       </PageSection>
 
       {!isEmptyRichText(blogPage.elements.body.value) && (
         <PageSection color="bg-white">
           <div className="flex flex-col pt-10 mx-auto gap-6"
-            {...createItemSmartLink(blogPage.system.id)}
-            {...createElementSmartLink("body")}
+          {...createItemSmartLink(blogPage.system.id)}
+          {...createElementSmartLink("body")}
           >
             <PortableText
               value={transformToPortableText(blogPage.elements.body.value)}
@@ -210,7 +169,7 @@ const BlogPage: React.FC = () => {
           </div>
         </PageSection>
       )}
-
+      
       <PageSection color="bg-white">
         <div className="pb-[160px] pt-[104px]">
           <BlogList
@@ -219,7 +178,6 @@ const BlogPage: React.FC = () => {
               title: post.elements.title.value,
               description: transformToPortableText(post.elements.body.value),
               readMoreLink: post.elements.url_slug.value,
-              itemId: post.system.id,
             }))}
           />
         </div>

@@ -1,7 +1,6 @@
 import React from "react";
 import ButtonLink from "../ButtonLink";
 import Tags from "../Tags";
-import { createItemSmartLink } from "../../utils/smartlink";
 
 type ServiceListItemProps = Readonly<{
   image: Readonly<{
@@ -12,7 +11,6 @@ type ServiceListItemProps = Readonly<{
   summary: string;
   tags: ReadonlyArray<string>;
   slug: string;
-  itemId: string;
 }>;
 
 const ServiceListItem: React.FC<ServiceListItemProps> = ({
@@ -21,11 +19,9 @@ const ServiceListItem: React.FC<ServiceListItemProps> = ({
   summary,
   tags,
   slug,
-  itemId,
 }) => {
   return (
-    <div className="flex flex-col lg:flex-row gap-16 justify-center items-center"
-    {...createItemSmartLink(itemId)}>
+    <div className="flex flex-col lg:flex-row gap-16 justify-center items-center">
       <div className="flex-1 flex flex-col">
         <img
           width={440}

@@ -2,7 +2,6 @@ import React from "react";
 import Link from "../Link";
 import { PortableText } from "@portabletext/react";
 import { PortableTextObject } from "@kontent-ai/rich-text-resolver";
-import { createItemSmartLink } from "../../utils/smartlink";
 
 type BlogListItemProps = Readonly<{
   imageSrc?: string;
@@ -10,7 +9,6 @@ type BlogListItemProps = Readonly<{
   description: PortableTextObject[];
   readMoreLink: string;
   className?: string;
-  itemId: string;
 }>;
 
 const BlogListItem: React.FC<BlogListItemProps> = ({
@@ -19,12 +17,9 @@ const BlogListItem: React.FC<BlogListItemProps> = ({
   description,
   readMoreLink,
   className,
-  itemId,
 }) => {
   return (
-    <div className={`flex flex-col md:flex-row gap-16 w-full ${className}`}
-    {...createItemSmartLink(itemId)}
-    >
+    <div className={`flex flex-col md:flex-row gap-16 w-full ${className}`}>
       <div className="">
         <img
           width={440}
