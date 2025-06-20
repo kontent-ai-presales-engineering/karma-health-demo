@@ -9,13 +9,15 @@ import { useSearchParams } from "react-router-dom";
 import { defaultPortableRichTextResolvers, isEmptyRichText } from "../utils/richtext";
 import { PortableText } from "@portabletext/react";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
-import { IUpdateMessageData, applyUpdateOnItemAndLoadLinkedItems } from "@kontent-ai/smart-link";
-import { useLivePreview } from "../context/SmartLinkContext";
+import { IRefreshMessageData, IRefreshMessageMetadata, IUpdateMessageData, applyUpdateOnItemAndLoadLinkedItems } from "@kontent-ai/smart-link";
+import { useCustomRefresh, useLivePreview } from "../context/SmartLinkContext";
 import { createElementSmartLink, createItemSmartLink } from "../utils/smartlink";
 import Selector, { SelectorOption } from "../components/Selector";
 import ImageWithTag from "../components/ImageWithTag";
 import Tags from "../components/Tags";
 import ButtonLink from "../components/ButtonLink";
+import { useSuspenseQueries } from "@tanstack/react-query";
+import { Replace } from "../utils/types";
 
 type FeaturedArticleProps = Readonly<{
   image: {
@@ -29,10 +31,13 @@ type FeaturedArticleProps = Readonly<{
   tags: ReadonlyArray<string>;
   description: string;
   urlSlug: string;
+  itemId: string;
 }>;
-const FeaturedArticle: React.FC<FeaturedArticleProps> = ({ image, title, published, tags, description, urlSlug }) => {
+const FeaturedArticle: React.FC<FeaturedArticleProps> = ({ image, title, published, tags, description, urlSlug, itemId }) => {
   return (
-    <div className="flex flex-col lg:flex-row items-center pt-[104px] pb-[120px] gap-12">
+    <div className="flex flex-col lg:flex-row items-center pt-[104px] pb-[120px] gap-12"
+    {...createItemSmartLink(itemId)}
+    {...createElementSmartLink("featured_article")}>
       <ImageWithTag
         image={{
           url: image.url,
@@ -204,6 +209,7 @@ const useArticleTopics = (isPreview: boolean) => {
 };
 
 const ArticlesListingPage: React.FC = () => {
+  const { environmentId, apiKey } = useAppContext();
   const [searchParams] = useSearchParams();
   const isPreview = searchParams.get("preview") === "true";
   const lang = searchParams.get("lang");
@@ -236,6 +242,42 @@ const ArticlesListingPage: React.FC = () => {
       searchParams.set("topic", option.codename);
     }
   };
+
+  const [landingPageData] = useSuspenseQueries({
+    queries: [
+      {
+        queryKey: ["landing_page"],
+        queryFn: () =>
+          createClient(environmentId, apiKey, isPreview)
+            .items()
+            .type("landing_page")
+            .limitParameter(1)
+            .toPromise()
+            .then(res =>
+              res.data.items[0] as Replace<Page, { elements: Partial<Page["elements"]> }> ?? null
+            )
+            .catch((err) => {
+              if (err instanceof DeliveryError) {
+                return null;
+              }
+              throw err;
+            }),
+      },
+    ],
+  });
+
+  const onRefresh = useCallback(
+    (_: IRefreshMessageData, metadata: IRefreshMessageMetadata, originalRefresh: () => void) => {
+      if (metadata.manualRefresh) {
+        originalRefresh();
+      } else {
+        landingPageData.refetch();
+      }
+    },
+    [articlesListingPage],
+  );
+
+  useCustomRefresh(onRefresh);
 
   if (!articlesListingPage || !articles) {
     return <div className="flex-grow" />;
@@ -301,6 +343,7 @@ const ArticlesListingPage: React.FC = () => {
             tags={featuredArticle.elements.topics.value.map(t => t.name)}
             description={featuredArticle.elements.introduction.value}
             urlSlug={featuredArticle.elements.url_slug.value}
+            itemId={featuredArticle.system.id}
           />
         </PageSection>
       )}

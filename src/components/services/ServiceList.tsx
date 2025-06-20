@@ -11,6 +11,7 @@ type ServiceData = Readonly<{
   summary: string;
   tags: ReadonlyArray<string>;
   urlSlug: string;
+  itemId: string;
 }>;
 
 type ServiceListProps = Readonly<{
@@ -24,6 +25,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
         services.map((service, index) => (
           <ServiceListItem
             key={index}
+            itemId={service.itemId}
             image={service.image}
             name={service.name}
             summary={service.summary}

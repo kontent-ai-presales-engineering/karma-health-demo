@@ -9,6 +9,7 @@ type Blog = Readonly<{
   title: string;
   description: PortableTextObject[];
   readMoreLink: string;
+  itemId: string;
 }>;
 
 type BlogListProps = Readonly<{
@@ -27,6 +28,7 @@ const BlogList: React.FC<BlogListProps> = ({ blogs }) => {
             description={blog.description}
             readMoreLink={blog.readMoreLink}
             className="pt-[98px] pb-[150px]"
+            itemId={blog.itemId}
           />
         </div>
       </PageSection>

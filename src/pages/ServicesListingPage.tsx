@@ -207,6 +207,7 @@ const ServicesListingPage: React.FC = () => {
             summary: service.elements.summary.value,
             tags: service.elements.medical_specialties.value.map(specialty => specialty.name),
             urlSlug: service.elements.url_slug.value,
+            itemId: service.system.id,
           }))}
         />
       </PageSection>
