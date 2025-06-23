@@ -43,7 +43,8 @@ const useLandingPage = (isPreview: boolean, lang: string | null) => {
       .items()
       .type("landing_page")
       .limitParameter(1)
-      .equalsFilter("system.collection", collection)
+      .depthParameter(3)
+      .equalsFilter("system.collection", collection ?? "patient_resources")
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
       .then(res => {
@@ -69,7 +70,7 @@ const useLandingPage = (isPreview: boolean, lang: string | null) => {
 };
 
 const LandingPage: FC = () => {
-  const { environmentId, apiKey } = useAppContext();
+  const { environmentId, apiKey, collection } = useAppContext();
   const [searchParams] = useSearchParams();
   const isPreview = searchParams.get("preview") === "true";
   const lang = searchParams.get("lang");
@@ -85,6 +86,8 @@ const LandingPage: FC = () => {
             .items()
             .type("landing_page")
             .limitParameter(1)
+            .depthParameter(3)
+            .equalsFilter("system.collection", collection ?? "patient_resources")
             .toPromise()
             .then(res =>
               res.data.items[0] as Replace<LandingPage, { elements: Partial<LandingPage["elements"]> }> ?? null
