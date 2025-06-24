@@ -3,9 +3,6 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { createClient } from "../utils/client";
 import { useAppContext } from "../context/AppContext";
 import { Article, LanguageCodenames } from "../model";
-import { PortableText } from "@portabletext/react";
-import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
-import { defaultPortableRichTextResolvers } from "../utils/richtext";
 import PageSection from "../components/PageSection";
 import Tags from "../components/Tags";
 import { NavLink } from "react-router";
@@ -17,6 +14,7 @@ import { useCustomRefresh, useLivePreview } from "../context/SmartLinkContext";
 import { createElementSmartLink, createItemSmartLink } from "../utils/smartlink";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { DeliveryError } from "@kontent-ai/delivery-sdk";
+import PageContent from "../components/PageContent";
 
 const HeroImageAuthorCard: React.FC<{
   prefix?: string;
@@ -87,7 +85,7 @@ const ArticleDetailPage: React.FC = () => {
           .type("article")
           .equalsFilter("system.codename", articleCodename)
           .languageParameter((lang ?? "default") as LanguageCodenames)
-          .depthParameter(1)
+          .depthParameter(3)
           .toPromise();
 
         return articleResponse.data.items[0] ?? null;
@@ -215,10 +213,7 @@ const ArticleDetailPage: React.FC = () => {
           {...createItemSmartLink(article.system.id)}
           {...createElementSmartLink("body_copy")}
           >
-            <PortableText
-              value={transformToPortableText(article.elements.body_copy?.value)}
-              components={defaultPortableRichTextResolvers}
-            />
+            <PageContent body={article.elements.body_copy!} itemId={article.system.id} elementName="body_copy" />
           </div>
         </div>
       </PageSection>

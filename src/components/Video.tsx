@@ -2,6 +2,7 @@ import { FC } from "react";
 import { Video as VideoType } from "../model";
 import { Replace } from "../utils/types";
 import { createComponentSmartLink, createItemSmartLink } from "../utils/smartlink";
+import { getYouTubeEmbedUrl, isYouTubeUrl } from "../utils/youtube";
 
 type VideoProps = {
   video: Replace<VideoType, { elements: Partial<VideoType["elements"]> }>;
@@ -10,6 +11,14 @@ type VideoProps = {
 };
 
 const VideoComponent: FC<VideoProps> = ({ video, parentId, componentId }) => {
+  const videoUrl = video.elements.video_link?.value;
+  const shouldAutoplay = video.elements.autoplay?.value[0]?.codename === "true";
+  
+  // Get the proper embed URL for YouTube videos, or use the original URL for other video types
+  const embedUrl = videoUrl && isYouTubeUrl(videoUrl) 
+    ? getYouTubeEmbedUrl(videoUrl, shouldAutoplay, shouldAutoplay)
+    : videoUrl;
+
   return (
     <div className="flex flex-col items-center py-16">
       <h2 className="text-azure text-[40px] md:text-[64px] leading-[54px] w-2/4 text-center"
@@ -20,7 +29,7 @@ const VideoComponent: FC<VideoProps> = ({ video, parentId, componentId }) => {
       <p className="w-4/6 text-center text-xl pt-6 text-gray">
         {video.elements.description?.value}
       </p>
-      {video.elements.video_link?.value
+      {embedUrl
         ? (
           <figure className="pt-20 w-full">
             <iframe
@@ -28,9 +37,7 @@ const VideoComponent: FC<VideoProps> = ({ video, parentId, componentId }) => {
               title={video.elements.headline?.value ?? "Video Title"}
               width={900}
               height={590}
-              src={`${video.elements.video_link.value}${
-                video.elements.autoplay?.value[0]?.codename === "true" ? "&autoplay=1&mute=1" : ""
-              }`}
+              src={embedUrl}
               referrerPolicy="strict-origin-when-cross-origin"
               allow={"autoplay"}
             />
