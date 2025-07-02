@@ -1,6 +1,6 @@
 import React from "react";
 import ButtonLink from "./ButtonLink";
-import { createItemSmartLink, createElementSmartLink, createComponentSmartLink } from "../utils/smartlink";
+import { createItemSmartLink, createElementSmartLink } from "../utils/smartlink";
 
 type CallToActionProps = Readonly<{
   title: string;
@@ -11,8 +11,8 @@ type CallToActionProps = Readonly<{
   imageAlt: string;
   imagePosition?: "left" | "right" | "center";
   style?: "burgundy" | "default";
-  parentId: string;
-  componentId: string | null;
+  componentId: string;
+  componentName: string;
 }>;
 
 const CallToActionComponent: React.FC<CallToActionProps> = ({
@@ -24,8 +24,8 @@ const CallToActionComponent: React.FC<CallToActionProps> = ({
   imageAlt,
   imagePosition = "left",
   style = "default",
-  parentId,
   componentId,
+  componentName,
 }) => {
   const calculateLayout = (imagePosition: "left" | "right" | "center") => {
     if (imagePosition === "left") {
@@ -39,12 +39,12 @@ const CallToActionComponent: React.FC<CallToActionProps> = ({
   return (
     <div
       className={`${style === "burgundy" ? "burgundy-theme" : ""} w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] px-4 lg:px-8 xl:px-16`}
+      {...createItemSmartLink(componentId, componentName)}
     >
       <div className="max-w-7xl mx-auto">
         <div
-          className={`flex flex-col ${
-            calculateLayout(imagePosition)
-          } items-center gap-16 py-16`}
+          className={`flex flex-col ${calculateLayout(imagePosition)
+            } items-center gap-16 py-16`}
         >
           <div className="rounded-lg xl:w-[560px] lg:w-[420px]">
             <img
@@ -58,17 +58,13 @@ const CallToActionComponent: React.FC<CallToActionProps> = ({
 
           <div className={`flex lg:flex-1 flex-col gap-5 ${imagePosition === "center" ? "items-center" : ""}`}>
             <h2 className={`flex w-fit text-6xl font-bold text-heading-2-color`}
-            {...createItemSmartLink(parentId)}
-            {...createElementSmartLink("headline")}
-            {...(componentId && createComponentSmartLink(componentId))}
+              {...createElementSmartLink("headline")}
             >
               {title}
             </h2>
 
             <p className={`flex text-xl text-body-color line-clamp-5`}
-            {...createItemSmartLink(parentId)}
-            {...createElementSmartLink("subheadline")}
-            {...(componentId && createComponentSmartLink(componentId))}
+              {...createElementSmartLink("subheadline")}
             >
               {description}
             </p>

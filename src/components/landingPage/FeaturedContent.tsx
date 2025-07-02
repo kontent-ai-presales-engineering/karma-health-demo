@@ -57,8 +57,8 @@ const FeaturedContent: FC<FeaturedContentProps> = ({ featuredContent, parentId }
               imageAlt={item.elements.image.value[0]?.description ?? "alt"}
               imagePosition={item.elements.image_position.value[0]?.codename ?? "left"}
               style="burgundy"
-              parentId={item.system.id}
-              componentId={null}
+              componentId={item.system.id}
+              componentName={item.system.name}
             />
           </div>
         </PageSection>
