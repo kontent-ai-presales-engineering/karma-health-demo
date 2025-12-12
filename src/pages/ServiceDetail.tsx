@@ -8,7 +8,7 @@ import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
 import { defaultPortableRichTextResolvers } from "../utils/richtext";
 import PageSection from "../components/PageSection";
 import Tags from "../components/Tags";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import { createPreviewLink } from "../utils/link";
 import { IRefreshMessageData, IRefreshMessageMetadata, IUpdateMessageData, applyUpdateOnItemAndLoadLinkedItems } from "@kontent-ai/smart-link";
 import { useCustomRefresh, useLivePreview } from "../context/SmartLinkContext";

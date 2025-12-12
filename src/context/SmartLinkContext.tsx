@@ -24,7 +24,7 @@ export const SmartLinkContextComponent: FC<PropsWithChildren> = ({ children }) =
   useEffect(() => {
     const instance = KontentSmartLink.initialize({
       defaultDataAttributes: {
-        projectId: environmentId,
+        environmentId: environmentId,
         languageCodename: "default",
       },
     });

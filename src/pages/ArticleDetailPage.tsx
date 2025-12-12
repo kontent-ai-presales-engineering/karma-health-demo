@@ -5,7 +5,7 @@ import { useAppContext } from "../context/AppContext";
 import { Article, LanguageCodenames } from "../model";
 import PageSection from "../components/PageSection";
 import Tags from "../components/Tags";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import PersonCard from "../components/PersonCard";
 import ArticleList from "../components/articles/ArticleList";
 import { createPreviewLink } from "../utils/link";

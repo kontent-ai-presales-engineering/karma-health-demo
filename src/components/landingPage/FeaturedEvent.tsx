@@ -5,7 +5,7 @@ import { formatDate } from "../../utils/date";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
 import { defaultPortableRichTextResolvers } from "../../utils/richtext";
 import { Replace } from "../../utils/types";
-import { PortableText } from "@kontent-ai/rich-text-resolver/utils/react";
+import { PortableText } from "@portabletext/react";
 import Tags from "../Tags";
 import Link from "../Link";
 import { createItemSmartLink } from "../../utils/smartlink";

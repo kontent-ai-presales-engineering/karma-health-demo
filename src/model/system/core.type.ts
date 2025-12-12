@@ -51,7 +51,7 @@ export type CoreClientTypes = {
   readonly languageCodenames: LanguageCodenames;
   readonly taxonomyCodenames: TaxonomyCodenames;
   readonly workflowCodenames: WorkflowCodenames;
-  readonly worfklowStepCodenames: WorkflowStepCodenames;
+  readonly workflowStepCodenames: WorkflowStepCodenames;
 };
 
 /**

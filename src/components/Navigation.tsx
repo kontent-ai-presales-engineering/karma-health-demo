@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { NavLink, useSearchParams } from "react-router";
+import { NavLink, useSearchParams } from "react-router-dom";
 import { createClient } from "../utils/client";
 import { CollectionCodenames, LandingPage, LanguageCodenames } from "../model";
 import { DeliveryError } from "@kontent-ai/delivery-sdk";

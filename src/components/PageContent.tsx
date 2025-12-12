@@ -2,7 +2,7 @@ import { FC } from "react";
 import { CallToAction, Disclaimer, Video } from "../model";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
 import { defaultPortableRichTextResolvers } from "../utils/richtext";
-import { PortableText, PortableTextReactResolvers } from "@kontent-ai/rich-text-resolver/utils/react";
+import { PortableText, PortableTextComponents, PortableTextTypeComponentProps } from "@portabletext/react";
 import PromotionalDisclaimer from "./disclaimer/PromotionalDisclaimer";
 import InformationalDisclaimer from "./disclaimer/InformationalDisclaimer";
 import CallToActionComponent from "./CallToAction";
@@ -34,10 +34,10 @@ const PageContent: FC<PageContentProps> = ({ body, itemId, elementName }) => {
 
 const createPortableTextComponents = (
   element: Elements.RichTextElement,
-): PortableTextReactResolvers => ({
+): PortableTextComponents => ({
   ...defaultPortableRichTextResolvers,
   types: {
-    componentOrItem: ({ value }) => {
+    componentOrItem: ({ value }: PortableTextTypeComponentProps<any>) => {
       const item = element.linkedItems.find(item => item.system.codename === value.componentOrItem._ref) as IContentItem;
       if (!item) {
         return <div>Did not find any item with codename {value.component._ref}</div>;

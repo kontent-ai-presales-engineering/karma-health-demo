@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm view:*)",
+      "Bash(node --version:*)",
+      "Bash(npm install)",
+      "Bash(npm run model:generate:*)",
+      "Bash(git restore:*)",
+      "Bash(npm run build:*)",
+      "Bash(cat:*)"
+    ]
+  }
+}

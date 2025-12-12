@@ -1,4 +1,4 @@
-import { NavLink, useSearchParams } from "react-router";
+import { NavLink, useSearchParams } from "react-router-dom";
 import { createPreviewLink } from "../utils/link";
 
 type LinkProps = Readonly<{
