@@ -4,7 +4,7 @@ import HeroImage from "../components/HeroImage";
 import PageContent from "../components/PageContent";
 import PageSection from "../components/PageSection";
 import "../index.css";
-import { LanguageCodenames, type LandingPage } from "../model";
+import { LanguageCodenames, type LandingPageType } from "../model";
 import { createClient } from "../utils/client";
 import { FC, useCallback, useState, useEffect } from "react";
 import { useAppContext } from "../context/AppContext";
@@ -17,7 +17,7 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 
 const useLandingPage = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey, collection } = useAppContext();
-  const [landingPage, setLandingPage] = useState<Replace<LandingPage, { elements: Partial<LandingPage["elements"]> }> | null>(null);
+  const [landingPage, setLandingPage] = useState<Replace<LandingPageType, { elements: Partial<LandingPageType["elements"]> }> | null>(null);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
     if (landingPage) {
@@ -32,7 +32,7 @@ const useLandingPage = (isPreview: boolean, lang: string | null) => {
           .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
-          setLandingPage(updatedItem as Replace<LandingPage, { elements: Partial<LandingPage["elements"]> }>);
+          setLandingPage(updatedItem as Replace<LandingPageType, { elements: Partial<LandingPageType["elements"]> }>);
         }
       });
     }
@@ -48,7 +48,7 @@ const useLandingPage = (isPreview: boolean, lang: string | null) => {
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
       .then(res => {
-        const item = res.data.items[0] as Replace<LandingPage, { elements: Partial<LandingPage["elements"]> }> | undefined;
+        const item = res.data.items[0] as Replace<LandingPageType, { elements: Partial<LandingPageType["elements"]> }> | undefined;
         if (item) {
           setLandingPage(item);
         } else {
@@ -90,7 +90,7 @@ const LandingPage: FC = () => {
             .equalsFilter("system.collection", collection ?? "patient_resources")
             .toPromise()
             .then(res =>
-              res.data.items[0] as Replace<LandingPage, { elements: Partial<LandingPage["elements"]> }> ?? null
+              res.data.items[0] as Replace<LandingPageType, { elements: Partial<LandingPageType["elements"]> }> ?? null
             )
             .catch((err) => {
               if (err instanceof DeliveryError) {

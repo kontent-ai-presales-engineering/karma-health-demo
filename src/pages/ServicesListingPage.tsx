@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import PageSection from "../components/PageSection";
 import { useAppContext } from "../context/AppContext";
 import { createClient } from "../utils/client";
-import { LanguageCodenames, Page, Service } from "../model";
+import { LanguageCodenames, PageType, ServiceType } from "../model";
 import { DeliveryError } from "@kontent-ai/delivery-sdk";
 import ServiceList from "../components/services/ServiceList";
 import { useSearchParams } from "react-router-dom";
@@ -15,11 +15,11 @@ import { createElementSmartLink, createItemSmartLink } from "../utils/smartlink"
 
 const useServicesPage = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey } = useAppContext();
-  const [page, setPage] = useState<Page | null>(null);
+  const [page, setPage] = useState<PageType | null>(null);
 
   const refetch = useCallback(() => {
     createClient(environmentId, apiKey, isPreview)
-      .item<Page>("services")
+      .item<PageType>("services")
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
       .then(res => {
@@ -46,7 +46,7 @@ const useServicesPage = (isPreview: boolean, lang: string | null) => {
           .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
-          setPage(updatedItem as Page);
+          setPage(updatedItem as PageType);
         }
       });
     }
@@ -75,11 +75,11 @@ const useServicesPage = (isPreview: boolean, lang: string | null) => {
 
 const useServices = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey } = useAppContext();
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<ServiceType[]>([]);
 
   const refetch = useCallback(() => {
     createClient(environmentId, apiKey, isPreview)
-      .items<Service>()
+      .items<ServiceType>()
       .type("service")
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
@@ -109,8 +109,8 @@ const useServices = (isPreview: boolean, lang: string | null) => {
               .then(res => res.data.items)
           ).then((updatedItem) => {
             if (updatedItem) {
-              setServices(prev => prev.map(s => 
-                s.system.codename === data.item.codename ? updatedItem as Service : s
+              setServices(prev => prev.map(s =>
+                s.system.codename === data.item.codename ? updatedItem as ServiceType : s
               ));
             }
           });

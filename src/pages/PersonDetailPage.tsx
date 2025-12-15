@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { createClient } from "../utils/client";
 import { useAppContext } from "../context/AppContext";
-import { LanguageCodenames, Person } from "../model";
+import { LanguageCodenames, PersonType } from "../model";
 import { DeliveryError } from "@kontent-ai/delivery-sdk";
 import { PortableText } from "@portabletext/react";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
@@ -26,7 +26,7 @@ const PersonDetailPage: React.FC = () => {
     queryFn: async () => {
       try {
         const response = await createClient(environmentId, apiKey, isPreview)
-          .item<Person>(slug ?? "")
+          .item<PersonType>(slug ?? "")
           .languageParameter((lang ?? "default") as LanguageCodenames)
           .toPromise();
 

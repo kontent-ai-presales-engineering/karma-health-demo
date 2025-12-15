@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { NavLink, useSearchParams } from "react-router-dom";
 import { createClient } from "../utils/client";
-import { CollectionCodenames, LandingPage, LanguageCodenames } from "../model";
+import { CollectionCodenames, LandingPageType, LanguageCodenames } from "../model";
 import { DeliveryError } from "@kontent-ai/delivery-sdk";
 import { useSuspenseQueries } from "@tanstack/react-query";
 import { useAppContext } from "../context/AppContext";
@@ -22,7 +22,7 @@ const Navigation: FC = () => {
         queryKey: ["navigation"],
         queryFn: () =>
           createClient(environmentId, apiKey, isPreview)
-            .items<LandingPage>()
+            .items<LandingPageType>()
             .type("landing_page")
             .limitParameter(1)
             .languageParameter((lang ?? "default") as LanguageCodenames)

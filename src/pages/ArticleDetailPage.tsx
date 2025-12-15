@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { createClient } from "../utils/client";
 import { useAppContext } from "../context/AppContext";
-import { Article, LanguageCodenames } from "../model";
+import { ArticleType, LanguageCodenames } from "../model";
 import PageSection from "../components/PageSection";
 import Tags from "../components/Tags";
 import { NavLink } from "react-router-dom";
@@ -71,7 +71,7 @@ const ArticleDetailPage: React.FC = () => {
       try {
         // First get the article by slug
         const systemResponse = await createClient(environmentId, apiKey, isPreview)
-          .items<Article>()
+          .items<ArticleType>()
           .type("article")
           .equalsFilter("elements.url_slug", slug ?? "")
           .toPromise();
@@ -81,7 +81,7 @@ const ArticleDetailPage: React.FC = () => {
 
         // Then get the full article data with language
         const articleResponse = await createClient(environmentId, apiKey, isPreview)
-          .items<Article>()
+          .items<ArticleType>()
           .type("article")
           .equalsFilter("system.codename", articleCodename)
           .languageParameter((lang ?? "default") as LanguageCodenames)

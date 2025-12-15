@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { createClient } from "../utils/client";
 import { useAppContext } from "../context/AppContext";
-import { Service, Person, LanguageCodenames } from "../model";
+import { ServiceType, PersonType, LanguageCodenames } from "../model";
 import { PortableText } from "@portabletext/react";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
 import { defaultPortableRichTextResolvers } from "../utils/richtext";
@@ -76,20 +76,20 @@ const ServiceDetail: React.FC = () => {
       
       // First get the service by slug
       const slugResponse = await client
-        .items<Service>()
+        .items<ServiceType>()
         .type("service")
         .equalsFilter("elements.url_slug", slug ?? "")
         .toPromise();
-      
+
       const serviceCodename = slugResponse.data.items[0]?.system.codename;
-      
+
       if (!serviceCodename) {
         return null;
       }
 
       // Then get the full service data with language
       const serviceResponse = await client
-        .items<Service>()
+        .items<ServiceType>()
         .type("service")
         .equalsFilter("system.codename", serviceCodename)
         .languageParameter((lang ?? "default") as LanguageCodenames)
@@ -134,8 +134,8 @@ const ServiceDetail: React.FC = () => {
 
   useCustomRefresh(onRefresh);
 
-  const teamMembers = useMemo(() => 
-    service?.elements.team.linkedItems.map((person: Person) => ({
+  const teamMembers = useMemo(() =>
+    service?.elements.team.linkedItems.map((person: PersonType) => ({
       id: person.system.id,
       prefix: person.elements.prefix?.value,
       firstName: person.elements.first_name?.value || "",

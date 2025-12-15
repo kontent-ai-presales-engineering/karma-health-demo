@@ -4,7 +4,7 @@ import HeroImage from "../components/HeroImage";
 import PageContent from "../components/PageContent";
 import PageSection from "../components/PageSection";
 import "../index.css";
-import { LanguageCodenames, type Page } from "../model";
+import { LanguageCodenames, type PageType } from "../model";
 import { createClient } from "../utils/client";
 import { FC, useCallback, useState, useEffect } from "react";
 import { useAppContext } from "../context/AppContext";
@@ -16,7 +16,7 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 
 const usePage = (isPreview: boolean, lang: string | null, slug: string | null) => {
   const { environmentId, apiKey } = useAppContext();
-  const [page, setPage] = useState<Replace<Page, { elements: Partial<Page["elements"]> }> | null>(null);
+  const [page, setPage] = useState<Replace<PageType, { elements: Partial<PageType["elements"]> }> | null>(null);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
     if (page) {
@@ -31,7 +31,7 @@ const usePage = (isPreview: boolean, lang: string | null, slug: string | null) =
           .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
-          setPage(updatedItem as Replace<Page, { elements: Partial<Page["elements"]> }>);
+          setPage(updatedItem as Replace<PageType, { elements: Partial<PageType["elements"]> }>);
         }
       });
     }
@@ -39,14 +39,14 @@ const usePage = (isPreview: boolean, lang: string | null, slug: string | null) =
 
   useEffect(() => {
     createClient(environmentId, apiKey, isPreview)
-      .items<Page>()
+      .items<PageType>()
       .type("page")
       .limitParameter(1)
       .equalsFilter("elements.url", slug ?? "")
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
       .then(res => {
-        const item = res.data.items[0] as Replace<Page, { elements: Partial<Page["elements"]> }> | undefined;
+        const item = res.data.items[0] as Replace<PageType, { elements: Partial<PageType["elements"]> }> | undefined;
         if (item) {
           setPage(item);
         } else {
@@ -82,14 +82,14 @@ const Page: FC = () => {
         queryKey: ["page"],
         queryFn: () =>
           createClient(environmentId, apiKey, isPreview)
-            .items<Page>()
+            .items<PageType>()
             .type("page")
             .limitParameter(1)
             .equalsFilter("elements.url", slug ?? "")
             .languageParameter((lang ?? "default") as LanguageCodenames)
             .toPromise()
             .then(res =>
-              res.data.items[0] as Replace<Page, { elements: Partial<Page["elements"]> }> ?? null
+              res.data.items[0] as Replace<PageType, { elements: Partial<PageType["elements"]> }> ?? null
             )
             .catch((err) => {
               if (err instanceof DeliveryError) {

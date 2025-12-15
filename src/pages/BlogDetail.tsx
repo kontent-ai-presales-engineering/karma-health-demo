@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { createClient } from "../utils/client";
 import { useAppContext } from "../context/AppContext";
-import { BlogPost, LanguageCodenames } from "../model";
+import { BlogPostType, LanguageCodenames } from "../model";
 import { DeliveryError } from "@kontent-ai/delivery-sdk";
 import { PortableText } from "@portabletext/react";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
@@ -27,7 +27,7 @@ const BlogDetail: React.FC = () => {
     queryKey: [`blog-post_${slug}`, isPreview, lang],
     queryFn: () =>
       createClient(environmentId, apiKey, isPreview)
-        .items<BlogPost>()
+        .items<BlogPostType>()
         .type("blog_post")
         .equalsFilter("elements.url_slug", slug ?? "")
         .languageParameter((lang ?? "default") as LanguageCodenames)
@@ -50,7 +50,7 @@ const BlogDetail: React.FC = () => {
           .items()
           .inFilter("system.codename", [...codenamesToFetch])
           .toPromise()
-          .then(res => res.data.items as BlogPost[])
+          .then(res => res.data.items as BlogPostType[])
       ).then((updatedItem) => {
         if (updatedItem) {
           queryClient.setQueryData([`blog-post_${slug}`, isPreview, lang], updatedItem);

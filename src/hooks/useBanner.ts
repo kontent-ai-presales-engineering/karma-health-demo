@@ -1,5 +1,5 @@
 import { DeliveryError } from "@kontent-ai/delivery-sdk";
-import { LanguageCodenames, type CallToAction } from "../model";
+import { LanguageCodenames, type CallToActionType } from "../model";
 import { createClient } from "../utils/client";
 import { useCallback, useState, useEffect } from "react";
 import { useAppContext } from "../context/AppContext";
@@ -8,14 +8,14 @@ import { useLivePreview } from "../context/SmartLinkContext";
 import { IUpdateMessageData, applyUpdateOnItemAndLoadLinkedItems } from "@kontent-ai/smart-link";
 
 export interface UseBannerResult {
-  banner: Replace<CallToAction, { elements: Partial<CallToAction["elements"]> }> | null;
+  banner: Replace<CallToActionType, { elements: Partial<CallToActionType["elements"]> }> | null;
   isLoading: boolean;
   error: string | null;
 }
 
 export const useBanner = (isPreview: boolean, lang: string | null, slug: string | null): UseBannerResult => {
   const { environmentId, apiKey } = useAppContext();
-  const [banner, setBanner] = useState<Replace<CallToAction, { elements: Partial<CallToAction["elements"]> }> | null>(null);
+  const [banner, setBanner] = useState<Replace<CallToActionType, { elements: Partial<CallToActionType["elements"]> }> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +31,7 @@ export const useBanner = (isPreview: boolean, lang: string | null, slug: string 
           .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
-          setBanner(updatedItem as Replace<CallToAction, { elements: Partial<CallToAction["elements"]> }>);
+          setBanner(updatedItem as Replace<CallToActionType, { elements: Partial<CallToActionType["elements"]> }>);
         }
       }).catch((err) => {
         console.error('Error updating banner:', err);
@@ -51,11 +51,11 @@ export const useBanner = (isPreview: boolean, lang: string | null, slug: string 
     setError(null);
 
     createClient(environmentId, apiKey, isPreview)
-      .item<CallToAction>(slug)
+      .item<CallToActionType>(slug)
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
       .then(res => {
-        const item = res.data.item as Replace<CallToAction, { elements: Partial<CallToAction["elements"]> }> | undefined;
+        const item = res.data.item as Replace<CallToActionType, { elements: Partial<CallToActionType["elements"]> }> | undefined;
         if (item) {
           setBanner(item);
           setError(null);

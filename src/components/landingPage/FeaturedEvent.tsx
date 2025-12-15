@@ -1,6 +1,6 @@
 import { FC } from "react";
 import FeaturedComponentBase from "./FeaturedComponentBase";
-import { Event } from "../../model";
+import { EventType } from "../../model";
 import { formatDate } from "../../utils/date";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
 import { defaultPortableRichTextResolvers } from "../../utils/richtext";
@@ -11,7 +11,7 @@ import Link from "../Link";
 import { createItemSmartLink } from "../../utils/smartlink";
 
 type FeaturedEventProps = Readonly<{
-  event: Replace<Event, { elements: Partial<Event["elements"]> }>;
+  event: Replace<EventType, { elements: Partial<EventType["elements"]> }>;
 }>;
 
 const FeaturedEvent: FC<FeaturedEventProps> = ({ event }) => {

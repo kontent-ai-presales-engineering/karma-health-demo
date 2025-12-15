@@ -4,7 +4,7 @@ import { useAppContext } from "../context/AppContext";
 import { createClient } from "../utils/client";
 import { DeliveryError } from "@kontent-ai/delivery-sdk";
 import TeamMemberList from "../components/team/TeamMemberList";
-import { Page, Person } from "../model/content-types";
+import { PageType, PersonType } from "../model";
 import { useSearchParams } from "react-router-dom";
 import { defaultPortableRichTextResolvers, isEmptyRichText } from "../utils/richtext";
 import { PortableText } from "@portabletext/react";
@@ -18,7 +18,7 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 
 const useTeamPage = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey } = useAppContext();
-  const [page, setPage] = useState<Replace<Page, { elements: Partial<Page["elements"]> }> | null>(null);
+  const [page, setPage] = useState<Replace<PageType, { elements: Partial<PageType["elements"]> }> | null>(null);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
     if (page) {
@@ -33,7 +33,7 @@ const useTeamPage = (isPreview: boolean, lang: string | null) => {
           .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
-          setPage(updatedItem as Replace<Page, { elements: Partial<Page["elements"]> }>);
+          setPage(updatedItem as Replace<PageType, { elements: Partial<PageType["elements"]> }>);
         }
       });
     }
@@ -41,7 +41,7 @@ const useTeamPage = (isPreview: boolean, lang: string | null) => {
 
   useEffect(() => {
     createClient(environmentId, apiKey, isPreview)
-      .item<Page>("our_team")
+      .item<PageType>("our_team")
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
       .then(res => {
@@ -63,7 +63,7 @@ const useTeamPage = (isPreview: boolean, lang: string | null) => {
 
 const useTeamMembers = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey } = useAppContext();
-  const [teamMembers, setTeamMembers] = useState<Person[]>([]);
+  const [teamMembers, setTeamMembers] = useState<PersonType[]>([]);
   
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
@@ -83,7 +83,7 @@ const useTeamMembers = (isPreview: boolean, lang: string | null) => {
           ).then((updatedItem) => {
             if (updatedItem) {
               setTeamMembers(prev => prev.map(m =>
-                m.system.codename === data.item.codename ? updatedItem as Person : m
+                m.system.codename === data.item.codename ? updatedItem as PersonType : m
               ));
             }
           });
@@ -96,7 +96,7 @@ const useTeamMembers = (isPreview: boolean, lang: string | null) => {
 
   useEffect(() => {
     createClient(environmentId, apiKey, isPreview)
-      .items<Person>()
+      .items<PersonType>()
       .type("person")
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
@@ -137,7 +137,7 @@ const OurTeamPage: React.FC = () => {
             .limitParameter(1)
             .toPromise()
             .then(res =>
-              res.data.items[0] as Replace<Page, { elements: Partial<Page["elements"]> }> ?? null
+              res.data.items[0] as Replace<PageType, { elements: Partial<PageType["elements"]> }> ?? null
             )
             .catch((err) => {
               if (err instanceof DeliveryError) {

@@ -4,7 +4,7 @@ import { useAppContext } from "../context/AppContext";
 import { createClient } from "../utils/client";
 import { DeliveryError } from "@kontent-ai/delivery-sdk";
 import BlogList from "../components/blog/BlogList";
-import { Page, BlogPost } from "../model/content-types";
+import { PageType, BlogPostType } from "../model";
 import { useSearchParams } from "react-router-dom";
 import { defaultPortableRichTextResolvers, isEmptyRichText } from "../utils/richtext";
 import { PortableText } from "@portabletext/react";
@@ -18,7 +18,7 @@ import { Replace } from "../utils/types";
 
 const useBlogPage = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey } = useAppContext();
-  const [page, setPage] = useState<Page | null>(null);
+  const [page, setPage] = useState<PageType | null>(null);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
     if (page) {
@@ -33,7 +33,7 @@ const useBlogPage = (isPreview: boolean, lang: string | null) => {
           .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
-          setPage(updatedItem as Page);
+          setPage(updatedItem as PageType);
         }
       });
     }
@@ -41,7 +41,7 @@ const useBlogPage = (isPreview: boolean, lang: string | null) => {
 
   useEffect(() => {
     createClient(environmentId, apiKey, isPreview)
-      .item<Page>("blog")
+      .item<PageType>("blog")
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
       .then(res => {
@@ -63,7 +63,7 @@ const useBlogPage = (isPreview: boolean, lang: string | null) => {
 
 const useBlogPosts = (isPreview: boolean, lang: string | null) => {
   const { environmentId, apiKey } = useAppContext();
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPostType[]>([]);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
     // Update the specific blog post in the list
@@ -82,7 +82,7 @@ const useBlogPosts = (isPreview: boolean, lang: string | null) => {
           ).then((updatedItem) => {
             if (updatedItem) {
               setBlogPosts(prev => prev.map(p =>
-                p.system.codename === data.item.codename ? updatedItem as BlogPost : p
+                p.system.codename === data.item.codename ? updatedItem as BlogPostType : p
               ));
             }
           });
@@ -95,7 +95,7 @@ const useBlogPosts = (isPreview: boolean, lang: string | null) => {
 
   useEffect(() => {
     createClient(environmentId, apiKey, isPreview)
-      .items<BlogPost>()
+      .items<BlogPostType>()
       .type("blog_post")
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
@@ -136,7 +136,7 @@ const BlogPage: React.FC = () => {
             .limitParameter(1)
             .toPromise()
             .then(res =>
-              res.data.items[0] as Replace<Page, { elements: Partial<Page["elements"]> }> ?? null
+              res.data.items[0] as Replace<PageType, { elements: Partial<PageType["elements"]> }> ?? null
             )
             .catch((err) => {
               if (err instanceof DeliveryError) {

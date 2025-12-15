@@ -1,7 +1,7 @@
 import { DeliveryError } from "@kontent-ai/delivery-sdk";
 
 import "../index.css";
-import { LanguageCodenames, type CallToAction } from "../model";
+import { LanguageCodenames, type CallToActionType } from "../model";
 import { createClient } from "../utils/client";
 import { FC, useCallback, useState, useEffect } from "react";
 import { useAppContext } from "../context/AppContext";
@@ -15,7 +15,7 @@ import PageSection from "../components/PageSection";
 
 const useBanner = (isPreview: boolean, lang: string | null, slug: string | null) => {
   const { environmentId, apiKey } = useAppContext();
-  const [banner, setBanner] = useState<Replace<CallToAction, { elements: Partial<CallToAction["elements"]> }> | null>(null);
+  const [banner, setBanner] = useState<Replace<CallToActionType, { elements: Partial<CallToActionType["elements"]> }> | null>(null);
 
   const handleLiveUpdate = useCallback((data: IUpdateMessageData) => {
     if (banner) {
@@ -30,7 +30,7 @@ const useBanner = (isPreview: boolean, lang: string | null, slug: string | null)
           .then(res => res.data.items)
       ).then((updatedItem) => {
         if (updatedItem) {
-          setBanner(updatedItem as Replace<CallToAction, { elements: Partial<CallToAction["elements"]> }>);
+          setBanner(updatedItem as Replace<CallToActionType, { elements: Partial<CallToActionType["elements"]> }>);
         }
       });
     }
@@ -38,11 +38,11 @@ const useBanner = (isPreview: boolean, lang: string | null, slug: string | null)
 
   useEffect(() => {
     createClient(environmentId, apiKey, isPreview)
-      .item<CallToAction>(slug ?? "")
+      .item<CallToActionType>(slug ?? "")
       .languageParameter((lang ?? "default") as LanguageCodenames)
       .toPromise()
       .then(res => {
-        const item = res.data.item as Replace<CallToAction, { elements: Partial<CallToAction["elements"]> }> | undefined;
+        const item = res.data.item as Replace<CallToActionType, { elements: Partial<CallToActionType["elements"]> }> | undefined;
         if (item) {
           setBanner(item);
         } else {
@@ -78,11 +78,11 @@ const BannerDetail: FC = () => {
         queryKey: ["banner"],
         queryFn: () =>
           createClient(environmentId, apiKey, isPreview)
-            .item<CallToAction>(slug ?? "")
+            .item<CallToActionType>(slug ?? "")
             .languageParameter((lang ?? "default") as LanguageCodenames)
             .toPromise()
             .then(res =>
-              res.data.item as Replace<CallToAction, { elements: Partial<CallToAction["elements"]> }> ?? null
+              res.data.item as Replace<CallToActionType, { elements: Partial<CallToActionType["elements"]> }> ?? null
             )
             .catch((err) => {
               if (err instanceof DeliveryError) {

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { isArticle, isEvent, LandingPage } from "../../model";
+import { isArticleType, isEventType, LandingPageType } from "../../model";
 import PageSection from "../PageSection";
 import FeaturedArticle from "./FeaturedArticle";
 import FeaturedEvent from "./FeaturedEvent";
@@ -8,14 +8,14 @@ import CallToAction from "../CallToAction";
 import { createElementSmartLink, createFixedAddSmartLink, createItemSmartLink } from "../../utils/smartlink";
 
 type FeaturedContentProps = {
-  featuredContent: LandingPage["elements"]["featured_content"];
+  featuredContent: LandingPageType["elements"]["featured_content"];
   parentId: string;
 };
 
 const FeaturedContent: FC<FeaturedContentProps> = ({ featuredContent, parentId }) => {
   const linkedItems = featuredContent.linkedItems.map(
     (item) => {
-      if (isArticle(item)) {
+      if (isArticleType(item)) {
         return (
           <PageSection color="bg-creme" key={item.system.codename}>
             <FeaturedArticle
@@ -37,7 +37,7 @@ const FeaturedContent: FC<FeaturedContentProps> = ({ featuredContent, parentId }
         );
       }
 
-      if (isEvent(item)) {
+      if (isEventType(item)) {
         return (
           <PageSection color="bg-creme" key={item.system.codename}>
             <FeaturedEvent event={item} />

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { CallToAction, Disclaimer, Video } from "../model";
+import { CallToActionType, DisclaimerType, VideoType } from "../model";
 import { transformToPortableText } from "@kontent-ai/rich-text-resolver";
 import { defaultPortableRichTextResolvers } from "../utils/richtext";
 import { PortableText, PortableTextComponents, PortableTextTypeComponentProps } from "@portabletext/react";
@@ -45,14 +45,14 @@ const createPortableTextComponents = (
 
       switch (item.system.type) {
         case "video":
-          return <VideoComponent video={item as Video} componentId={item.system.id} componentName={item.system.name} />;
+          return <VideoComponent video={item as VideoType} componentId={item.system.id} componentName={item.system.name} />;
         case "disclaimer":
-          const disclaimerItem = item as Disclaimer;
+          const disclaimerItem = item as DisclaimerType;
           return disclaimerItem.elements.type.value[0]?.codename === "promotional"
             ? <PromotionalDisclaimer title={disclaimerItem.elements.headline.value} text={disclaimerItem.elements.subheadline.value} componentId={item.system.id} componentName={item.system.name} />
             : <InformationalDisclaimer title={disclaimerItem.elements.headline.value} text={disclaimerItem.elements.subheadline.value} componentId={item.system.id} componentName={item.system.name} />;
         case "call_to_action":
-          const cta = item as CallToAction;
+          const cta = item as CallToActionType;
           return (
             <CallToActionComponent
               title={cta.elements.headline.value}

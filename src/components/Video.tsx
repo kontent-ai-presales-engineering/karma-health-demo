@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Video as VideoType } from "../model";
+import { VideoType } from "../model";
 import { Replace } from "../utils/types";
 import { createElementSmartLink, createItemSmartLink } from "../utils/smartlink";
 import { getYouTubeEmbedUrl, isYouTubeUrl } from "../utils/youtube";
