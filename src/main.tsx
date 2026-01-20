@@ -19,6 +19,7 @@ import Page from "./pages/Page.tsx";
 import BannerDetail from "./pages/BannerDetail.tsx";
 import LinkedInPreviewPage from "./pages/LinkedInPreviewPage.tsx";
 import NewsletterPreviewPage from "./pages/NewsletterPreviewPage.tsx";
+import Microsite from "./pages/Microsite.tsx";
 import Auth0ProviderWithRedirect from "./components/auth/AuthProviderWithRedirect.tsx";
 
 const queryClient = new QueryClient();
@@ -151,6 +152,30 @@ const router = createBrowserRouter([
             }
           >
             <NewsletterPreviewPage />
+          </Suspense>
+        </ErrorBoundary>
+      </Auth0ProviderWithRedirect>
+    ),
+  },
+  {
+    path: "/microsite-preview/:slug",
+    element: (
+      <Auth0ProviderWithRedirect>
+        <ErrorBoundary
+          fallbackRender={({ error }) => (
+            <div>
+              There was an error! <pre>{error.message}</pre>
+            </div>
+          )}
+        >
+          <Suspense
+            fallback={
+              <div className="flex w-screen h-screen justify-center">
+                <Loader />
+              </div>
+            }
+          >
+            <Microsite />
           </Suspense>
         </ErrorBoundary>
       </Auth0ProviderWithRedirect>

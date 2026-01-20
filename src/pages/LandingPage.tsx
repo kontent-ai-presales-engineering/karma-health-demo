@@ -87,7 +87,7 @@ const LandingPage: FC = () => {
             .type("landing_page")
             .limitParameter(1)
             .depthParameter(3)
-            .equalsFilter("system.collection", collection ?? "patient_resources")
+            .equalsFilter("elements.url", slug ?? "")
             .toPromise()
             .then(res =>
               res.data.items[0] as Replace<LandingPageType, { elements: Partial<LandingPageType["elements"]> }> ?? null

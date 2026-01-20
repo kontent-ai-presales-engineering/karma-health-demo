@@ -5,9 +5,9 @@
  *  
  * -------------------------------------------------------------------------------
  * 
- * Project: Karma Health Master Demo
+ * Project: Karma Health Master Demo - Multi Spaces
  * Environment: Production
- * Id: fd58c119-60b3-013c-7ac4-c7b4cf69bc7b
+ * Id: 63433181-640b-015e-bd79-e0a68d0bf9d6
  * 
  * -------------------------------------------------------------------------------
  */
@@ -17,6 +17,7 @@ export * from "./collections/common-collection.generated.ts"
 export * from "./collections/marketing-resources-collection.generated.ts"
 export * from "./collections/operations-collection.generated.ts"
 export * from "./collections/patient-resources-collection.generated.ts"
+export * from "./collections/wellness-summit-2026-collection.generated.ts"
 export * from "./languages/english-en-us-language.generated.ts"
 export * from "./languages/german-de-de-language.generated.ts"
 export * from "./languages/spanish-es-es-language.generated.ts"

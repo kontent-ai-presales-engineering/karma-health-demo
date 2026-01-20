@@ -5,14 +5,15 @@
  *  
  * -------------------------------------------------------------------------------
  * 
- * Project: Karma Health Master Demo
+ * Project: Karma Health Master Demo - Multi Spaces
  * Environment: Production
- * Id: fd58c119-60b3-013c-7ac4-c7b4cf69bc7b
+ * Id: 63433181-640b-015e-bd79-e0a68d0bf9d6
  * 
  * -------------------------------------------------------------------------------
  */
 
 import type { Elements, IContentItem } from "@kontent-ai/delivery-sdk"
+import type { MetadataSnippet } from "../snippets/metadata.generated.ts"
 import type { CollectionCodenames } from "../system/collections.generated.ts"
 import type { LanguageCodenames } from "../system/languages.generated.ts"
 import type { TypeCodenames } from "../system/types.generated.ts"
@@ -106,7 +107,7 @@ export type LandingPageType = IContentItem<
      * Allowed content types: page
      */
     readonly subpages: Elements.LinkedItemsElement<PageType>
-  },
+  } & MetadataSnippet,
   LandingPageTypeCodename,
   LanguageCodenames,
   CollectionCodenames,
@@ -124,6 +125,9 @@ export type LandingPageTypeElementCodenames =
   | "body_copy"
   | "featured_content"
   | "subpages"
+  | "metadata__title"
+  | "metadata__keywords"
+  | "metadata__description"
 
 /*
  * Type guard for Landing Page

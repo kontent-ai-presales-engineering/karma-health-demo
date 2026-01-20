@@ -15,15 +15,15 @@
 import type { CollectionCodenames } from "../system/collections.generated.ts"
 
 /*
- * Type representing codename of 'Marketing Resources' collection
+ * Type representing codename of 'Wellness Summit 2026' collection
  */
-export type MarketingResourcesCollectionCodename = keyof Pick<Record<CollectionCodenames, null>, "marketing_resources">
+export type WellnessSummit2026CollectionCodename = keyof Pick<Record<CollectionCodenames, null>, "wellness_summit_2026">
 
 /*
- * Typeguard for codename of 'Marketing Resources' collection
+ * Typeguard for codename of 'Wellness Summit 2026' collection
  */
-export function isMarketingResourcesCollectionCodename(
+export function isWellnessSummit2026CollectionCodename(
   value: string | undefined | null,
-): value is MarketingResourcesCollectionCodename {
-  return typeof value === "string" && value === ("marketing_resources" satisfies MarketingResourcesCollectionCodename)
+): value is WellnessSummit2026CollectionCodename {
+  return typeof value === "string" && value === ("wellness_summit_2026" satisfies WellnessSummit2026CollectionCodename)
 }
