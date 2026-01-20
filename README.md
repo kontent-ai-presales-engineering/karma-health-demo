@@ -62,17 +62,34 @@ The microsite preview uses the `landing_page` content type with the following st
 
 ### Setting Up a Microsite in Kontent.ai
 
-1. **Create a Landing Page item**
+1. **Create a Collection for your Microsite**
+   - Go to **Project settings** > **Collections**
+   - Create a new collection for your microsite (e.g., "Wellness Summit 2026")
+   - This keeps your microsite content organized and separate from main site content
+
+2. **Create a Space for your Microsite**
+   - Go to **Project settings** > **Spaces**
+   - Click **Create new space**
+   - Configure the space:
+     - **Space name**: Give it a descriptive name (e.g., "Microsite")
+     - **Collections**: Select the collection(s) that contain your microsite content
+     - **Root item**: Select your Landing Page item as the root item
+   - Click **Save**
+
+   ![Microsite Space Configuration](docs/microsite-space-config.png)
+
+3. **Create a Landing Page item**
    - Go to your Kontent.ai project
    - Create a new content item of type `Landing Page`
+   - Make sure to place it in your microsite collection
    - Fill in the headline, subheadline, and hero image
 
-2. **Add Subpages for Navigation**
+4. **Add Subpages for Navigation**
    - In the `Subpages` element, link existing `Page` content items
    - These pages will automatically appear as navigation items in the microsite
    - The order of linked pages determines the navigation order
 
-3. **Configure the Preview URL**
+5. **Configure the Preview URL**
    - Go to **Project settings** > **Preview URLs**
    - Add a new preview URL for the `Landing Page` content type:
    ```
@@ -83,7 +100,7 @@ The microsite preview uses the `landing_page` content type with the following st
    http://localhost:3000/microsite-preview/{Codename}?preview=true
    ```
 
-4. **Optional: Add Featured Content**
+6. **Optional: Add Featured Content**
    - Link events, articles, or call-to-action items to display in a featured section
 
 ### Accessing the Microsite Preview
